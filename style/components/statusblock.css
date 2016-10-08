@@ -1,0 +1,49 @@
+.status-block{
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 15px;
+  max-height: 10vh;
+  overflow-y: hidden;
+  transition: max-height .5s;
+}
+
+.status-block.alive{
+  border-color: rgb(65, 185, 84);
+}
+
+.status-block.error{
+  border-color: rgb(185, 65, 65);
+}
+
+.status-block.unknown{
+  border-color: rgb(180, 180, 180);
+}
+
+.status-block > *{
+    display: block;
+}
+
+.status-name{
+  font-size: 16pt;
+  font-weight: 500;
+}
+.status-block > span > span{
+  font-size: 10pt;
+  color: rgb(66, 66, 66);
+}
+
+.status-message{
+  font-size: 10pt;
+  /*display: none;*/
+}
+
+.status-lastupdated::before{
+  content:"Last Updated";
+  margin-right: 5px;
+}
+
+.status-lastupdated{
+  float:right;
+  font-size: 8pt;
+}
