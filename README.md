@@ -1,2 +1,4 @@
 # matrix-status
-A status checker built upon Matrix.
+A service status site built upon Matrix.
+
+Live demo at [https://status.half-shot.uk](https://status.half-shot.uk)
