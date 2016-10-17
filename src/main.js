@@ -8,7 +8,6 @@ var hs_url = null;
 var hs_access_token = "";
 var hs_user_id = "";
 var room_id = null;
-var name = null;
 var concern_interval = null;
 function main () {
   document.title = "Status | No connection";
@@ -29,7 +28,6 @@ function main () {
   .then((response) => {
     room_id = response.room_id;
     hs_url = response.homeserver;
-    name = response.name || "Status Page";
     concern_interval = response.concern_interval || 30;
     hs_access_token = localStorage.getItem("status_mx_access_token");
     hs_user_id = localStorage.getItem("status_mx_user_id");
@@ -61,10 +59,10 @@ function startClient () {
 
   client.on("sync", function (state) {
     if(state == "PREPARED") { //TODO Check to see if we are interested.
-      document.title = "Status | " + name;
       var status_room = client.getRoom(room_id);
+      document.title = "Status | " + status_room.name;
       ReactDOM.render(
-        <StatusInterface concern_interval={concern_interval} name={name} room={status_room} state={state} client={client}></StatusInterface>,
+        <StatusInterface concern_interval={concern_interval} room={status_room} state={state} client={client}></StatusInterface>,
         document.getElementById("rootDOM")
       );
     }

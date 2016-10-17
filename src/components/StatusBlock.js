@@ -3,6 +3,9 @@ const Chart = require('chart.js');
 const CHART_POINTS = 8;
 var StatusBlock = React.createClass({
   componentWillMount: function () {
+    if(window.location.hash == "#/expand/"+this.props.itemkey) {
+      this.setState({ toggled: true });
+    }
   },
   getInitialState: function () {
     return { toggled: false }
@@ -37,8 +40,13 @@ var StatusBlock = React.createClass({
       var pdiff = point.timestamp - last;
       if(pdiff >= interval*(i+1) || point == prev[prev.length-1]) {
         dataset.data[i] /= items;
-        dataset.labels.push(timeDifference(diff- (interval*(i+1))));
-        dataset.pointSize = items;
+        console.log(Date.now(), last)
+        var timepoint = Math.max(
+          (Date.now()- last) - (interval*(i+1)),
+          0
+        );
+        dataset.labels.push(timeDifference(timepoint));
+        dataset.pointSize = (items / prev.length)*25;
         //33-100% Green ammount
         var colors = [20, 20, 20];
 
@@ -104,6 +112,8 @@ var StatusBlock = React.createClass({
     if(this.state.toggled != nextState.toggled) {
       if(nextState.toggled) {
         this.createHistoryChart();
+        //TODO: Fix
+        history.pushState({}, this.props.content.name, "#/expand/"+this.props.itemkey);
       }
       else {
         this._chart.destroy();
@@ -115,7 +125,6 @@ var StatusBlock = React.createClass({
     var nicetime = timeDifference(diff);
     var classname = "status-block ";
     var status;
-
     if(this.props.content.status == "up" && diff < this.props.concern_interval*60000) {
       classname += "alive";
       status = "Online";
@@ -129,10 +138,6 @@ var StatusBlock = React.createClass({
       status = "Unknown | Last Status: ";
     }
 
-    if(this.state.toggled) {
-      this._chart.config.data = this.getChartData();
-      this._chart.update();
-    }
 
     return (
 
@@ -152,6 +157,17 @@ var StatusBlock = React.createClass({
       <time className="status-lastupdated" dateTime={this.props.time.toISOString()}>{nicetime}</time>
 
     </div>);
+  },
+  componentDidUpdate: function () {
+    if(this.state.toggled) {
+      if(!this._chart) {
+        this.createHistoryChart();
+        //Toggle size
+        this._canvas.parentNode.parentNode.style['max-height'] = "80vh";
+      }
+      this._chart.config.data = this.getChartData();
+      this._chart.update();
+    }
   },
   expandStatusBlock: function (element) {
     if(this.state.toggled) {

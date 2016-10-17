@@ -1,15 +1,17 @@
 const React = require('react');
 const StatusBlock = require('./StatusBlock.js');
+
+const INITIAL_EVENT_COUNT = 500;
 var Interface = React.createClass({
   componentWillMount: function () {
     //Get current state
-    //var state = this.props.room.getLiveTimeline().getState('f');
-    // Get the important events
-    // var state_ev = state.getStateEvents("uk.half-shot.status");
-    // for(var ev of state_ev) {
-    //   this.newStateEvent(ev);
-    // }
-    this.props.client.scrollback(this.props.room, 100).then(() => {
+    this.props.client.roomState(this.props.room.roomId).then(events => {
+      for(var ev of events) {
+        this.newStateEvent(ev);
+      }
+    });
+
+    this.props.client.scrollback(this.props.room, INITIAL_EVENT_COUNT).then((data) => {
       for(var ev of this.props.room.getLiveTimeline().getEvents()) {
         this.newStateEvent(ev);
       }
@@ -81,7 +83,7 @@ var Interface = React.createClass({
     return (
       <div>
         <header>
-          <h1>{this.props.name}</h1>
+          <h1>{this.props.room.name}</h1>
         </header>
         <div className="status-interface">
           {list}
